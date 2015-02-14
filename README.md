@@ -1,7 +1,7 @@
 # openvpn_bash_wrapper
 A simple wrapper script for openvpn.
 
-##How to use
+##How to install
 
 1. Download this repository
 2. Unzip the archive
@@ -10,4 +10,3 @@ A simple wrapper script for openvpn.
 4. Mv the vpn script to newly created bin
 5. Add your bin folder to path by editing .bashrc and adding the following line
 	'PATH=~/bin:$PATH'
-	
