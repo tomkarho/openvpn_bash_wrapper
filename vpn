@@ -1,0 +1,62 @@
+#!/bin/bash
+#
+# vpn
+# 
+# Wrapper command for openvpn 
+#
+
+#Define variables
+USERNAME=tomkarho
+VPN=/usr/bin/openvpn
+CONFIGROOT=/home/$USERNAME/.config/openvpn
+CONFIGFILE=$1
+EXPECTED_ARGS=1
+GENERALERROR=1
+E_BADARGS=65
+OPTIONSCOUNT=1
+QUIT="Quit"
+PROMT="You didn't specify a config file. Please choose location: "
+
+if [[ $EUID -ne 0 ]]; then
+  echo "You must be a root user" 2>&1
+  exit $GENERALERROR
+fi
+
+#configuration file should be give as an argument but if there isn't one then show available options
+if [ $# -ne $EXPECTED_ARGS ]
+then
+
+
+declare -a options=($QUIT)
+
+#populate array of options with whereever config files are
+for file in $CONFIGROOT/*
+	do
+		if [ -f "$file" ];then
+			filename=$(basename "$file")
+    		options[$OPTIONSCOUNT]=$filename
+    		OPTIONSCOUNT=$OPTIONSCOUNT+1
+  		fi
+	done
+
+	echo "$PROMT"
+
+	select CONFIGFILE in "${options[@]}"
+	do
+  case $CONFIGFILE in
+        "$QUIT")
+          echo "Exiting."
+          break
+          ;;
+        *)
+          echo "You picked $CONFIGFILE"
+          $VPN $CONFIGROOT/$CONFIGFILE
+          break
+          ;;
+  esac
+  
+done
+#When the config file is given as argument no need for selection
+else
+	$VPN $CONFIGFILE
+fi
